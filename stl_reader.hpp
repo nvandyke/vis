@@ -9,6 +9,7 @@
 #include <iterator>
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
 
 class stl_reader {
 
@@ -37,9 +38,13 @@ public:
         //std::cout << numTriangles << "\n";
  */
         
-        
+        //each triangle is 50 bytes
         unsigned char triangleBuffer[50];
+        
+        //next 4 bytes is the number of triangles
         unsigned char numTrianglesBuffer[4];
+        
+        //first 80 bytes are the header
         unsigned char headerBuffer[80];
         
         FILE *ptr;
@@ -48,13 +53,23 @@ public:
         fread(headerBuffer, sizeof(headerBuffer),1,ptr);
         
         fread(numTrianglesBuffer, sizeof(numTrianglesBuffer),1,ptr);
-        fclose(ptr);
         
         std::cout << headerBuffer << std::endl;
-        std::cout << numTrianglesBuffer[0] << numTrianglesBuffer[1] << numTrianglesBuffer[2] << numTrianglesBuffer[3] << std::endl;
-        int n = std::atoi( ( char * ) numTrianglesBuffer );
+        int32_t numTriangles = (numTrianglesBuffer[3] << 24) + 
+                    (numTrianglesBuffer[2] << 16) + 
+                    (numTrianglesBuffer[1] << 8) + 
+                    (numTrianglesBuffer[0]);
+        std::cout << numTriangles << std::endl;
         
-        std::cout << n << std::endl;
+        for (int i = 0; i < numTriangles; ++i) {
+            fread(triangleBuffer, sizeof(triangleBuffer), 1, ptr);
+            std::cout << triangleBuffer << std::endl;
+            
+        }
+        
+        
+        
+        fclose(ptr);
         /* std::ifstream infile;
         infile.open(filename, std::ios::binary | std::ios::in);
         std::cout << infile.fail() << std::endl;
