@@ -20,71 +20,49 @@ public:
         filename(filePath) {} ;
     
     std::vector<triangle> read_stl() {
-        /* std::ifstream input(filename, std::ios::binary);
-        std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
-        std::cout << buffer.size() << std::endl;
-        
-        //first 80 bytes are the header
-        unsigned int start_byte = 0;
-        unsigned int end_byte = 79;
-        std::string header(buffer.begin() + start_byte, buffer.begin() + end_byte);
-        std::cout << header << "\n";
-        
-        input.close();
-        //next 4 bytes is number of triangles
-        start_byte = ++end_byte;
-        end_byte += 3;
-        //std::string numTriangles(buffer.begin() + start_byte, buffer.begin() + end_byte);
-        //std::cout << numTriangles << "\n";
- */
-        
-        //each triangle is 50 bytes
-        unsigned char triangleBuffer[50];
-        
-        //next 4 bytes is the number of triangles
-        unsigned char numTrianglesBuffer[4];
         
         //first 80 bytes are the header
         unsigned char headerBuffer[80];
         
-        FILE *ptr;
-        ptr = fopen("cat.stl","rb");
+        //next 4 bytes is the number of triangles
+        unsigned char numTrianglesBuffer[4];
         
-        fread(headerBuffer, sizeof(headerBuffer),1,ptr);
+        //each triangle is 50 bytes
+        unsigned char triangleBuffer[50];
         
-        fread(numTrianglesBuffer, sizeof(numTrianglesBuffer),1,ptr);
+        //return list of triangles
+        std::vector<triangle> mesh;
         
-        std::cout << headerBuffer << std::endl;
-        int32_t numTriangles = (numTrianglesBuffer[3] << 24) + 
+        //file handle
+        FILE *filePtr;
+        filePtr = fopen(filename.c_str(),"rb");
+        
+        //grab the header
+        fread(headerBuffer, sizeof(headerBuffer),1,filePtr);
+        //std::cout << headerBuffer << std::endl;
+        
+        //grab the number of triangles and process into integer
+        fread(numTrianglesBuffer, sizeof(numTrianglesBuffer),1,filePtr);
+        
+        uint32_t numTriangles = (numTrianglesBuffer[3] << 24) + 
                     (numTrianglesBuffer[2] << 16) + 
                     (numTrianglesBuffer[1] << 8) + 
                     (numTrianglesBuffer[0]);
-        std::cout << numTriangles << std::endl;
+        //std::cout << numTriangles << std::endl;
         
-        for (int i = 0; i < numTriangles; ++i) {
-            fread(triangleBuffer, sizeof(triangleBuffer), 1, ptr);
-            std::cout << triangleBuffer << std::endl;
+        for (uint32_t i = 0; i < numTriangles; ++i) {
+            //grab the next 50 bytes
+            fread(triangleBuffer, sizeof(triangleBuffer), 1, filePtr);
             
+            //process into triangle and add to list
+            triangle tri = bufferToTriangle(triangleBuffer);
+            mesh.push_back(tri);
         }
         
         
+        fclose(filePtr);
         
-        fclose(ptr);
-        /* std::ifstream infile;
-        infile.open(filename, std::ios::binary | std::ios::in);
-        std::cout << infile.fail() << std::endl;
-        int32_t numTriangles;
-        infile.seekp(80, std::ios::beg);
-        std::cout << infile.fail() << std::endl;
-        infile.read(&numTriangles, sizeof(numTriangles));
-        std::cout << infile.fail() << std::endl;
-        infile.close(); */
         
-        //next 4 bytes are the
-        vector3 a;
-        triangle t1(a,a,a,a);
-        std::vector<triangle> mesh;
-        mesh.push_back(t1);
         return mesh;
         
     };
@@ -92,7 +70,50 @@ public:
 
 
 private:
+    triangle bufferToTriangle(unsigned char buffer[]) {
+        
+        //first 12 bytes are the normal vector - ignore
+        vector3 normal = bufferToVector3(buffer);
+        
+        //next 12 bytes are node 1
+        vector3 node1 = bufferToVector3(buffer + 12);
+        
+        //next 12 bytes are node 2
+        vector3 node2 = bufferToVector3(buffer + 24);
+        
+        //next 12 bytes are node 3
+        vector3 node3 = bufferToVector3(buffer + 36);
+        
+        //last 2 bytes are the attribute byte count - ignore
+        
+        //form triangle
+        triangle tri(node1,node2,node3,normal);
+        return tri;
+    };
     
+    vector3 bufferToVector3(unsigned char buffer[]) {
+        
+        //convert buffer into 3 floats (4 bytes each)
+        float x = bufferToFloat(buffer + 0);
+        float y = bufferToFloat(buffer + 4);
+        float z = bufferToFloat(buffer + 8);
+        
+        //form vector
+        vector3 vec(x,y,z);
+        return vec;
+    }
+    
+    float bufferToFloat(unsigned char buffer[]){
+        
+        //things are flipped, also need to bitshift
+        uint32_t hexVal = ((buffer[3] << 24) + (buffer[2] << 16) + (buffer[1] << 8) + (buffer[0] << 0));
+        
+        //convert data to float
+        float floatVal = *((float*) &hexVal);
+        
+        //std::cout << floatVal << std::endl;
+        return floatVal;
+    }
     
 };
 #endif
