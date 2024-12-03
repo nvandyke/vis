@@ -1,7 +1,7 @@
 #include "graphics.hpp"
 #include "vector3.hpp"
 #include "triangle.hpp"
-
+#include <cstdint>
 
 void rasterization(std::vector<triangle> mesh) {
     
