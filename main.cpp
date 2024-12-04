@@ -4,7 +4,7 @@
 
 
 mesh simpleMesh() {
-    
+
     vector3 a(0,0,0);
     vector3 b(1,0,0);
     vector3 c(0,1,0);
@@ -21,9 +21,8 @@ mesh simpleMesh() {
 int main() {
     std::cout << "Hello World!\n";
     stl_reader cat("cat.stl");
-    mesh catMesh = cat.read_stl();
-    //mesh catMesh = simpleMesh();
-    //rasterization(catMesh);
+    //mesh catMesh = cat.read_stl();
+    mesh catMesh = simpleMesh();
     std::vector<mesh> meshes = {catMesh};
     canvas screen;
     scene computation(screen, meshes);

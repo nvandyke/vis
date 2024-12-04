@@ -62,9 +62,9 @@ public:
         //grab the number of triangles and process into integer
         fread(numTrianglesBuffer, sizeof(numTrianglesBuffer),1,filePtr);
 
-        uint32_t numTriangles = (numTrianglesBuffer[3] << 24) + 
-                    (numTrianglesBuffer[2] << 16) + 
-                    (numTrianglesBuffer[1] << 8) + 
+        uint32_t numTriangles = (numTrianglesBuffer[3] << 24) +
+                    (numTrianglesBuffer[2] << 16) +
+                    (numTrianglesBuffer[1] << 8) +
                     (numTrianglesBuffer[0]);
         //std::cout << numTriangles << std::endl;
 
@@ -90,49 +90,49 @@ public:
 
 private:
     triangle bufferToTriangle(unsigned char buffer[]) {
-        
+
         //first 12 bytes are the normal vector - ignore
         vector3 normal = bufferToVector3(buffer);
-        
+
         //next 12 bytes are node 1
         vector3 node1 = bufferToVector3(buffer + 12);
-        
+
         //next 12 bytes are node 2
         vector3 node2 = bufferToVector3(buffer + 24);
-        
+
         //next 12 bytes are node 3
         vector3 node3 = bufferToVector3(buffer + 36);
-        
+
         //last 2 bytes are the attribute byte count - ignore
-        
+
         //form triangle
         triangle tri(node1,node2,node3,normal);
         return tri;
     };
-    
+
     vector3 bufferToVector3(unsigned char buffer[]) {
-        
+
         //convert buffer into 3 floats (4 bytes each)
         float x = bufferToFloat(buffer + 0);
         float y = bufferToFloat(buffer + 4);
         float z = bufferToFloat(buffer + 8);
-        
+
         //form vector
         vector3 vec(x,y,z);
         return vec;
     }
-    
+
     float bufferToFloat(unsigned char buffer[]){
-        
+
         //things are flipped, also need to bitshift
         uint32_t hexVal = ((buffer[3] << 24) + (buffer[2] << 16) + (buffer[1] << 8) + (buffer[0] << 0));
-        
+
         //convert data to float
         float floatVal = *((float*) &hexVal);
-        
+
         //std::cout << floatVal << std::endl;
         return floatVal;
     }
-    
+
 };
 #endif

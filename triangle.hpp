@@ -23,13 +23,6 @@ public:
         nodes.push_back(node2);
         nodes.push_back(node3);
         normal = normal_vec;
-        
     };
-
-
-private:
-    
-    
-    
 };
 #endif
