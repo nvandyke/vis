@@ -7,8 +7,9 @@
 void scene::rasterization() {
 
     for (mesh actor : actors) {
-        uint32_t numTriangles = actor.numTriangles();
-        for (uint32_t i = 0; i < numTriangles; ++i) {
+        //uint32_t numTriangles = actor.numTriangles();
+        //for (uint32_t i = 0; i < numTriangles; ++i) {
+        for (triangle tri : actor.triangles) {
             
         }
     }

@@ -80,6 +80,7 @@ public:
 
         fclose(filePtr);
 
+        //create mesh object for return
         mesh retVal(meshTriangles);
         return retVal;
 

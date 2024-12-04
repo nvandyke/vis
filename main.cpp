@@ -24,5 +24,9 @@ int main() {
     mesh catMesh = cat.read_stl();
     //mesh catMesh = simpleMesh();
     //rasterization(catMesh);
+    std::vector<mesh> meshes = {catMesh};
+    canvas screen;
+    scene computation(screen, meshes);
+    computation.rasterization();
     return 0;
 }
