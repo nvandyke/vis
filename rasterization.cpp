@@ -1,12 +1,15 @@
 #include "graphics.hpp"
 #include "vectors.hpp"
 #include "triangle.hpp"
+#include "stl_reader.hpp"
 #include <cstdint>
 
-void rasterization(std::vector<triangle> mesh) {
-    
-    uint32_t numTriangles = mesh.size();
-    for (uint32_t i = 0; i < numTriangles; ++i) {
-        
+void scene::rasterization() {
+
+    for (mesh actor : actors) {
+        uint32_t numTriangles = actor.numTriangles();
+        for (uint32_t i = 0; i < numTriangles; ++i) {
+            
+        }
     }
 }

@@ -12,60 +12,77 @@
 #include <algorithm>
 #include <cstdint>
 
+
+class mesh {
+public:
+
+    std::vector<triangle> triangles;
+    uint32_t numTriangles() { return triangles.size(); };
+    matrix3 rotGlobalToCanvas;
+    vector3 originGlobal;
+
+    mesh(std::vector<triangle> inputTris) {
+        triangles = inputTris;
+    };
+private:
+
+};
+
+
 class stl_reader {
 
 public:
     std::string filename;
-    
-    stl_reader(std::string filePath = "") : 
+
+    stl_reader(std::string filePath = "") :
         filename(filePath) {} ;
-    
-    std::vector<triangle> read_stl() {
-        
+
+    mesh read_stl() {
+
         //first 80 bytes are the header
         unsigned char headerBuffer[80];
-        
+
         //next 4 bytes is the number of triangles
         unsigned char numTrianglesBuffer[4];
-        
+
         //each triangle is 50 bytes
         unsigned char triangleBuffer[50];
-        
+
         //return list of triangles
-        std::vector<triangle> mesh;
-        
+        std::vector<triangle> meshTriangles;
+
         //file handle
         FILE *filePtr;
         filePtr = fopen(filename.c_str(),"rb");
-        
+
         //grab the header
         fread(headerBuffer, sizeof(headerBuffer),1,filePtr);
         //std::cout << headerBuffer << std::endl;
-        
+
         //grab the number of triangles and process into integer
         fread(numTrianglesBuffer, sizeof(numTrianglesBuffer),1,filePtr);
-        
+
         uint32_t numTriangles = (numTrianglesBuffer[3] << 24) + 
                     (numTrianglesBuffer[2] << 16) + 
                     (numTrianglesBuffer[1] << 8) + 
                     (numTrianglesBuffer[0]);
         //std::cout << numTriangles << std::endl;
-        
+
         for (uint32_t i = 0; i < numTriangles; ++i) {
             //grab the next 50 bytes
             fread(triangleBuffer, sizeof(triangleBuffer), 1, filePtr);
-            
+
             //process into triangle and add to list
             triangle tri = bufferToTriangle(triangleBuffer);
-            mesh.push_back(tri);
+            meshTriangles.push_back(tri);
         }
-        
-        
+
+
         fclose(filePtr);
-        
-        
-        return mesh;
-        
+
+        mesh retVal(meshTriangles);
+        return retVal;
+
     };
 
 

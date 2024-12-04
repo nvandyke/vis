@@ -3,6 +3,7 @@
 #include <vector>
 #include "triangle.hpp"
 #include "vectors.hpp"
+#include "stl_reader.hpp"
 #include <cstdint>
 
 
@@ -19,7 +20,7 @@ public:
     vector3 originGlobal;
     uint32_t numPixelsX, numPixelsY;
     std::vector<std::vector<pixel>> image;
-    canvas(uint32_t xSize, uint32_t ySize) {
+    canvas(uint32_t xSize = 0, uint32_t ySize = 0) {
         numPixelsX = xSize;
         numPixelsY = ySize;
         resetImage();
@@ -36,7 +37,23 @@ public:
 
 };
 
-void rasterization(std::vector<triangle> mesh);
+
+class scene {
+public:
+    canvas screen;
+    std::vector<mesh> actors;
+
+    scene() {};
+    scene(canvas inputCanvas, std::vector<mesh> inputActors) {
+        screen = inputCanvas;
+        actors = inputActors;
+    };
+    void formImage();
+    void rasterization();
+    void rayTracing();
+
+};
+
 
 
 #endif
