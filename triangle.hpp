@@ -1,7 +1,7 @@
 #ifndef TRIANGLE
 #define TRIANGLE
 
-#include "vector3.hpp"
+#include "vectors.hpp"
 #include <vector>
 
 class triangle {

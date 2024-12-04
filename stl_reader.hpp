@@ -1,7 +1,7 @@
 #ifndef STLREADER
 #define STLREADER
 
-#include "vector3.hpp"
+#include "vectors.hpp"
 #include "triangle.hpp"
 #include <string>
 #include <fstream>
