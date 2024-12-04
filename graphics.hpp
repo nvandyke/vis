@@ -7,12 +7,6 @@
 #include <cstdint>
 
 
-class pixel {
-public:
-    uint8_t r, g, b;
-    pixel(uint8_t rVal = 0, uint8_t gVal = 0, uint8_t bVal = 0) :
-        r(rVal), g(gVal), b(bVal) {};
-};
 
 class canvas {
 public:
@@ -51,9 +45,11 @@ public:
     void formImage();
     void rasterization();
     void rayTracing();
-
+    vector2 projectOntoCanvas();
+    bool pixelInTriangle(uint32_t i, uint32_t j,
+                         vector2 n1, vector2 n2, vector2 n3);
 };
 
-
+float sign(vector2 n1, vector2 n2, vector2 n3);
 
 #endif
